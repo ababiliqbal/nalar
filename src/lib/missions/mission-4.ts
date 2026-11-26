@@ -7,8 +7,8 @@ export const mission4: MissionDefinition = {
   subtitle: 'Mengolah array nilai dan membandingkan Sequential Search vs Binary Search',
   kkaTopic: 'Array (List), Pencarian, & Perbandingan Algoritma (TP 3.1)',
   caseNarrative: [
-    'Panitia ujian sekolah menyimpan rekap nilai siswa dalam bentuk array (list bilangan bulat) bernama daftar_nilai. Untuk fitur pencarian cepat, panitia juga menyimpan salinan daftar yang sudah terurut menaik dari kecil ke besar bernama daftar_terurut.',
-    'Kamu diminta merancang dua solusi algoritmik yang efisien:',
+    'Panitia ujian sekolah menyimpan rekap nilai siswa dalam bentuk list angka bernama daftar_nilai. Untuk fitur pencarian cepat, panitia juga menyiapkan salinan daftar yang sudah urut dari nilai terkecil ke terbesar bernama daftar_terurut.',
+    'Kamu diminta membuat dua fitur pencarian yang cepat dan rapi:',
     '1. Menemukan nilai tertinggi dari daftar_nilai (mengembalikan None jika daftar kosong).',
     '2. Mencari posisi indeks sebuah nilai target pada daftar_terurut menggunakan Binary Search dengan membagi dua wilayah pencarian di setiap langkah (mengembalikan indeks integer jika ditemukan, atau -1 jika tidak ditemukan).',
   ].join('\n\n'),
@@ -44,7 +44,7 @@ export const mission4: MissionDefinition = {
         EXPLORER:
           'Untuk cari_tertinggi, jadikan elemen pertama daftar sebagai nilai tertinggi awal (setelah memastikan daftar tidak kosong), lalu bandingkan dengan elemen sisanya.',
         BUILDER:
-          'Pada Binary Search, ingat bahwa saat elemen tengah bukan target, batas baru harus bergeser melewati tengah (tengah + 1 atau tengah - 1) agar loop tidak macet.',
+          'Pada Binary Search, ingat bahwa saat elemen tengah bukan target, batas baru harus bergeser melewati indeks tengah agar ruang pencarian selalu menyusut dan loop tidak macet.',
         ARCHITECT:
           'Verifikasi invarian batas kiri dan kanan pada pseudocode Binary Search-mu agar tidak terjadi kesalahan off-by-one saat target berada di ujung indeks.',
       },
@@ -66,7 +66,7 @@ export const mission4: MissionDefinition = {
         BUILDER:
           'Hitung perbandingan jumlah langkah terburuk (1.000 vs pangkat dua terdekat), lalu cek apa nilai kiri dan kanan saat list kosong [].',
         ARCHITECT:
-          'Kaitkan perbandingan 1.000 langkah vs ~10 langkah dengan pertumbuhan ruang pencarian (pembelahan berulang), lalu buktikan terminasi aman untuk target yang absen.',
+          'Kaitkan perbandingan efisiensi kedua algoritma dengan pola penyempitan ruang pencarian di setiap langkah, lalu buktikan bahwa loop pasti berhenti saat target tidak ada.',
       },
     },
     coding: {
@@ -138,7 +138,7 @@ export const mission4: MissionDefinition = {
         EXPLORER:
           'Pada Python, pembagian bulat untuk indeks tengah memakai operator //, sedangkan nilai kosong ditulis None (huruf N kapital).',
         BUILDER:
-          'Pastikan kondisi while memakai <= (bukan <) agar elemen terakhir tetap diperiksa, dan selalu ubah kiri atau kanan dengan tengah + 1 / tengah - 1.',
+          'Cek kembali kondisi berhenti perulangan while saat batas kiri dan kanan bertemu di satu elemen, serta pastikan pembaruan batas selalu melewati indeks tengah agar tidak terjebak perulangan tak berujung.',
         ARCHITECT:
           'Cek apakah inisialisasi nilai maksimum awal mengambil elemen pertama daftar (bukan 0) dan apakah batas Binary Search aman dari infinite loop.',
       },

@@ -7,8 +7,8 @@ export const mission2: MissionDefinition = {
   subtitle: 'Mengambil keputusan berlapis menggunakan percabangan bertingkat (nested if)',
   kkaTopic: 'Percabangan Bertingkat (Nested If) & Operator Logika (AP-K10-07)',
   caseNarrative: [
-    'Sekolah menerapkan aturan kelulusan akhir semester mata pelajaran KKA berdasarkan tiga data siswa: nilai ujian (0–100), persentase kehadiran (0–100), dan kepemilikan surat izin resmi (ada_surat_izin bernilai True atau False).',
-    'Aturan keputusan berlapis yang berlaku adalah:',
+    'Menjelang pembagian rapor semester, guru mata pelajaran KKA menentukan status kelulusan siswa berdasarkan tiga data: nilai ujian (0–100), persentase kehadiran (0–100), dan apakah siswa memiliki surat izin resmi (ada_surat_izin bernilai True atau False).',
+    'Aturan kelulusan berlapis yang berlaku adalah:',
     '• Jika nilai >= 75:',
     '  - Jika kehadiran >= 80 -> "Lulus"',
     '  - Selain jika kehadiran >= 60 dan ada_surat_izin bernilai True -> "Lulus Bersyarat"',
@@ -71,7 +71,7 @@ export const mission2: MissionDefinition = {
         BUILDER:
           'Pada kasus (b), cek apakah memiliki surat izin saja cukup ketika kehadiran baru 59%. Pada kasus (c), cek blok luar mana yang dimasuki nilai 74.',
         ARCHITECT:
-          'Analisis sensitivitas batas (*boundary analysis*): jelaskan secara presisi angka mana saja yang akan berubah status jika tanda >= diganti >.',
+          'Lakukan analisis nilai batas: jelaskan secara presisi angka mana saja yang akan berubah status jika tanda >= keliru ditulis menjadi >.',
       },
     },
     coding: {

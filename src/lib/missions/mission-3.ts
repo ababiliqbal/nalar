@@ -13,7 +13,7 @@ export const mission3: MissionDefinition = {
     '• "snack" = 2 menit',
     '• "minuman" = 1 menit',
     '• Pesanan selain ketiga jenis tersebut (tidak dikenal) = 0 menit.',
-    'Pengelola kantin membutuhkan algoritma untuk menghitung total menit pelayanan seluruh pesanan dari semua loket secara otomatis.',
+    'Bantu pengelola kantin merancang cara otomatis untuk menghitung total menit pelayanan seluruh pesanan dari semua loket.',
   ].join('\n\n'),
   stages: {
     logic: {
@@ -56,7 +56,7 @@ export const mission3: MissionDefinition = {
       edgeCaseScenario:
         'Uji pseudocode-mu terhadap tiga kasus ekstrem berikut: (a) loket kosong di tengah antrean [["paket_berat"], [], ["minuman"]]; (b) seluruh loket kosong [] atau [[], []]; (c) terdapat pesanan tidak dikenal [["snack", "kopi_susu"]].',
       prompt:
-        'Telusuri jalannya nested loop milikmu pada ketiga kasus ekstrem di atas! Berapa hasil masing-masing (5, 0, dan 2?) dan mengapa algoritma tidak mengalami error saat menjumpai loket kosong []?',
+        'Telusuri jalannya nested loop milikmu pada ketiga kasus ekstrem di atas! Berapa hasil masing-masing dan mengapa algoritma tidak mengalami error saat menjumpai loket kosong []?',
       rubricCriteria: [
         'Menjelaskan bahwa saat menemui loket kosong [], loop dalam langsung dilewati (0 iterasi) dan lanjut ke loket berikutnya sehingga kasus (a) menghasilkan 5 menit.',
         'Menjelaskan bahwa saat daftar_loket kosong atau semua loket kosong, nilai total_waktu tetap 0 tanpa error.',
@@ -133,7 +133,7 @@ export const mission3: MissionDefinition = {
       ],
       staticHints: {
         EXPLORER:
-          'Gunakan dua perulangan for bersarang: for loket in daftar_loket: lalu di dalamnya for pesanan in loket:, dan kembalikan variabel total di bagian paling bawah fungsi.',
+          'Bayangkan dua lapisan perulangan for: perulangan luar mengambil satu per satu antrean tiap loket, lalu perulangan di dalamnya memeriksa tiap item pesanan sebelum total dikembalikan di bagian akhir fungsi.',
         BUILDER:
           'Periksa indentasi baris return agar berada sejajar dengan loop luar, bukan di dalam loop (yang akan membuat fungsi berhenti lebih cepat).',
         ARCHITECT:

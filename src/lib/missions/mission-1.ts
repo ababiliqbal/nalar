@@ -12,7 +12,7 @@ export const mission1: MissionDefinition = {
     '1. Jalur A (Jalan Raya): butuh 15 menit saat cuaca cerah, tetapi macet hingga 45 menit jika hujan.',
     '2. Jalur B (Jalan Tikus): butuh 25 menit (tepat batas waktu), tetapi tertutup dan tidak bisa dilalui jika banjir.',
     '3. Jalur C (Jalan Tol): butuh 10 menit (tercepat), tetapi hanya bisa dilalui jika membawa uang tol (punya_uang).',
-    'Aturan prioritas keputusan yang ditetapkan: cek Jalur A terlebih dahulu (jika tidak hujan -> "Jalur A"); jika tidak memenuhi, cek Jalur B (jika tidak banjir -> "Jalur B"); jika masih tidak memenuhi, cek Jalur C (jika punya uang -> "Jalur C"); jika seluruh jalur tidak memungkinkan, nyatakan "Tidak Ada Jalur Aman".',
+    'Agar tidak bingung saat terburu-buru, Mamat mengikuti urutan pilihan berikut: cek Jalur A dulu (jika tidak hujan -> "Jalur A"); kalau hujan, cek Jalur B (jika tidak banjir -> "Jalur B"); kalau masih terkendala, cek Jalur C (jika punya uang tol -> "Jalur C"); dan jika seluruh jalur tidak memungkinkan, hasilnya "Tidak Ada Jalur Aman".',
   ].join('\n\n'),
   stages: {
     logic: {

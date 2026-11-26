@@ -26,7 +26,7 @@ export const mission5: MissionDefinition = {
   subtitle: 'Mengintegrasikan perulangan & logika diskon sekaligus melacak bug kode',
   kkaTopic: 'Integrasi Logika, Perulangan, & Debugging (AP-K10-09..11)',
   caseNarrative: [
-    'Koperasi sekolah membuat fungsi Python hitung_total_bayar(daftar_harga, is_member) untuk menghitung total pembayaran belanja siswa dengan aturan bisnis berikut:',
+    'Koperasi sekolah membuat fungsi Python hitung_total_bayar(daftar_harga, is_member) untuk menghitung total pembayaran belanja siswa dengan aturan kasir berikut:',
     '• Jika daftar_harga kosong, kembalikan 0.',
     '• Jumlahkan seluruh harga barang di dalam daftar_harga untuk mendapatkan subtotal.',
     '• Jika subtotal >= 100000, pembeli memperoleh diskon belanja sebesar 10% dari subtotal.',
@@ -85,9 +85,9 @@ export const mission5: MissionDefinition = {
       ],
       staticHints: {
         EXPLORER:
-          'Periksa baris demi baris kode panitia: satu baris membuat Python langsung gagal membaca sintaks, satu baris salah tanda pembanding angka 100000, dan baris terakhir salah tanda operasi hitung.',
+          'Baca kode panitia pelan-pelan dari atas ke bawah: cek kelengkapan tanda baca Python di setiap blok if, kecocokan syarat batas minimal belanja, dan arah operasi hitung diskon di akhir fungsi.',
         BUILDER:
-          'Bedakan kesalahan yang memicu SyntaxError sebelum kode berjalan dengan dua kesalahan logika yang baru terlihat ketika hasilnya dibandingkan dengan aturan bisnis.',
+          'Bedakan kesalahan yang memicu SyntaxError sebelum kode berjalan dengan dua kesalahan logika yang baru terlihat ketika hasilnya dibandingkan dengan aturan kasir.',
         ARCHITECT:
           'Audit seluruh struktur kontrol, operator batas, dan formula pengembalian nilai terhadap skenario batas subtotal == 100000.',
       },
@@ -160,7 +160,7 @@ export const mission5: MissionDefinition = {
         BUILDER:
           'Bandingkan setiap baris yang gagal pada pesan assert terhadap tiga temuan bug yang sudah kamu catat di Tahap Evaluation.',
         ARCHITECT:
-          'Verifikasi perbaikan secara berurutan: sintaks blok if, inklusivitas batas diskon belanja, dan tanda operasi pengurangan diskon pada baris return.',
+          'Verifikasi tiga lapisan perbaikan secara sistematis: kelengkapan sintaks struktur kontrol, inklusivitas syarat batas diskon, dan kebenaran formula akhir sebelum dikembalikan.',
       },
     },
   },
