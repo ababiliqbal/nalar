@@ -36,3 +36,31 @@ export const authSessionSchema = z.object({
 });
 
 export type AuthSessionInput = z.infer<typeof authSessionSchema>;
+
+export const pretestOptionKeySchema = z.enum(['A', 'B', 'C', 'D'], {
+  error: 'Pilihan jawaban harus berupa A, B, C, atau D',
+});
+
+export const pretestAnswersSchema = z
+  .object({
+    '1': pretestOptionKeySchema,
+    '2': pretestOptionKeySchema,
+    '3': pretestOptionKeySchema,
+    '4': pretestOptionKeySchema,
+    '5': pretestOptionKeySchema,
+    '6': pretestOptionKeySchema,
+  })
+  .strict();
+
+export const pretestSubmitSchema = z.object({
+  answers: pretestAnswersSchema,
+  durationSec: z
+    .number({ error: 'Durasi pengerjaan harus berupa angka' })
+    .int('Durasi pengerjaan harus bilangan bulat')
+    .min(0, 'Durasi pengerjaan tidak boleh negatif')
+    .max(86400, 'Durasi pengerjaan melebihi batas wajar'),
+});
+
+export type PretestAnswersInput = z.infer<typeof pretestAnswersSchema>;
+export type PretestSubmitInput = z.infer<typeof pretestSubmitSchema>;
+
