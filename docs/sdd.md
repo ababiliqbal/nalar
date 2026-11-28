@@ -555,8 +555,8 @@ Seluruh endpoint menggunakan format JSON UTF-8 dan memvalidasi payload menggunak
 
 1. **Google Gemini API (`@google/genai`):**
    - **Model Routing:**
-     - Tier `hint`: `process.env.GEMINI_MODEL_HINT` (default: `gemini-2.5-flash-lite`) — _temperature_ `0.3`, `maxOutputTokens: 120`.
-     - Tier `mentor`: `process.env.GEMINI_MODEL_MENTOR` (default: `gemini-2.5-flash`) — _temperature_ `0.2` untuk evaluator JSON, `0.4` untuk chat Sokratis.
+     - Tier `hint`: `process.env.GEMINI_MODEL_HINT` (default: `gemini-3.5-flash-lite`) — _temperature_ `0.3`, `maxOutputTokens: 120`.
+     - Tier `mentor`: `process.env.GEMINI_MODEL_MENTOR` (default: `gemini-3.5-flash`) — _temperature_ `0.2` untuk evaluator JSON, `0.4` untuk chat Sokratis.
    - **Structured Output Evaluator (Tahap 1–3):** Menggunakan parameter `responseMimeType: "application/json"` disertai `responseSchema` ketat yang memetakan 4 field `RubricEvaluationResult`.
    - **Kontrak Keamanan Prompt:** Payload ke Gemini **hanya** menyertakan `{ missionContext, stageRubric, scaffoldingLevel, sanitizedInput }` tanpa satupun atribut PII siswa. Input siswa dibungkus tag `<student_answer>...</student_answer>`.
 2. **Supabase PostgreSQL:** Koneksi HTTPS via `@supabase/supabase-js` (server-side only).
@@ -731,8 +731,8 @@ ALGORITMA AdaptScaffoldingLevel(currentRank ∈ {1, 2, 3}, failedEvals, hints, c
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only | Ya       | Kunci akses penuh sisi server (melewati RLS); **dilarang** pakai `NEXT_PUBLIC_`. |
 | `SESSION_SECRET`            | Server-only | Ya       | Kunci rahasia 32-byte (hex/base64) untuk penandatanganan JWT sesi.               |
 | `GEMINI_API_KEYS`           | Server-only | Ya       | Daftar API key Gemini dipisahkan koma: `AIzaKey1,AIzaKey2,AIzaKey3`.             |
-| `GEMINI_MODEL_HINT`         | Server-only | Opsional | Default: `gemini-2.5-flash-lite`.                                                |
-| `GEMINI_MODEL_MENTOR`       | Server-only | Opsional | Default: `gemini-2.5-flash`.                                                     |
+| `GEMINI_MODEL_HINT`         | Server-only | Opsional | Default: `gemini-3.5-flash-lite`.                                                |
+| `GEMINI_MODEL_MENTOR`       | Server-only | Opsional | Default: `gemini-3.5-flash`.                                                     |
 | `NEXT_PUBLIC_PYODIDE_CDN`   | Client-safe | Opsional | URL CDN Pyodide WASM (default jsDelivr versi terkunci `v0.26.4`).                |
 
 ---
