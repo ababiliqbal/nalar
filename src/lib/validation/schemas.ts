@@ -64,3 +64,52 @@ export const pretestSubmitSchema = z.object({
 export type PretestAnswersInput = z.infer<typeof pretestAnswersSchema>;
 export type PretestSubmitInput = z.infer<typeof pretestSubmitSchema>;
 
+export const missionIdSchema = z
+  .number({ error: 'ID misi harus berupa angka' })
+  .int('ID misi harus bilangan bulat')
+  .min(1, 'ID misi minimal 1')
+  .max(5, 'ID misi maksimal 5');
+
+export const missionStageSchema = z.enum(
+  ['logic', 'analysis', 'evaluation', 'coding'],
+  { error: 'Tahap misi tidak valid' }
+);
+
+export const aiHintRequestSchema = z.object({
+  missionId: missionIdSchema,
+  stage: missionStageSchema,
+  currentInputText: z
+    .string()
+    .trim()
+    .min(20, 'Tulis minimal 20 karakter untuk memicu petunjuk otomatis')
+    .max(4000, 'Teks melebihi batas maksimal 4000 karakter'),
+});
+
+export const aiChatRequestSchema = z.object({
+  missionId: missionIdSchema,
+  stage: missionStageSchema,
+  message: z
+    .string()
+    .trim()
+    .min(1, 'Pesan tidak boleh kosong')
+    .max(2000, 'Pesan maksimal 2000 karakter'),
+  currentDraft: z
+    .string()
+    .max(4000, 'Draf maksimal 4000 karakter')
+    .optional(),
+});
+
+export const evaluateStageRequestSchema = z.object({
+  answerText: z
+    .string()
+    .trim()
+    .min(5, 'Jawaban minimal 5 karakter sebelum dievaluasi')
+    .max(4000, 'Jawaban maksimal 4000 karakter'),
+});
+
+export type AiHintRequestInput = z.infer<typeof aiHintRequestSchema>;
+export type AiChatRequestInput = z.infer<typeof aiChatRequestSchema>;
+export type EvaluateStageRequestInput = z.infer<
+  typeof evaluateStageRequestSchema
+>;
+

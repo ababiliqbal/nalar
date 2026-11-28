@@ -476,3 +476,127 @@ export async function assertStageAccess(
   const progressRows = await ensureMissionProgressRows(studentId);
   return evaluateStageAccess(progressRows, missionId, stage);
 }
+
+/**
+ * Mengambil level scaffolding aktif terbaru siswa langsung dari tabel `students`.
+ */
+export async function getStudentCurrentLevel(
+  studentId: string
+): Promise<ScaffoldingLevelCode | null> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from('students')
+    .select('current_level, initial_level')
+    .eq('id', studentId)
+    .maybeSingle<{
+      current_level: string | null;
+      initial_level: string | null;
+    }>();
+
+  if (error) {
+    throw new Error(`Gagal memuat level siswa: ${error.message}`);
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  if (isScaffoldingLevelCode(data.current_level)) {
+    return data.current_level;
+  }
+  if (isScaffoldingLevelCode(data.initial_level)) {
+    return data.initial_level;
+  }
+  return 'EXPLORER';
+}
+
+/**
+ * Menandai tahap aktif sebagai lulus (`${stage}_passed = true`) dan memajukan
+ * `current_stage` ke tahap berikutnya apabila siswa belum melewatinya.
+ */
+export async function markStagePassed(
+  studentId: string,
+  missionId: number,
+  stage: MissionStage
+): Promise<{ nextStage: MissionStage | null }> {
+  if (!isMissionId(missionId) || !isMissionStage(stage)) {
+    throw new Error('Parameter misi atau tahap tidak valid.');
+  }
+
+  const rows = await ensureMissionProgressRows(studentId);
+  const currentRow = rows.find((row) => row.mission_id === missionId);
+
+  const stageIndex = STAGE_ORDER.indexOf(stage);
+  const nextStage: MissionStage | null =
+    stageIndex >= 0 && stageIndex < STAGE_ORDER.length - 1
+      ? STAGE_ORDER[stageIndex + 1]
+      : null;
+
+  const existingStageIndex = currentRow
+    ? STAGE_ORDER.indexOf(currentRow.current_stage)
+    : 0;
+  const targetNextStage: MissionStage =
+    nextStage && STAGE_ORDER.indexOf(nextStage) > existingStageIndex
+      ? nextStage
+      : (currentRow?.current_stage ?? stage);
+
+  const passedColumn = `${stage}_passed` as
+    | 'logic_passed'
+    | 'analysis_passed'
+    | 'evaluation_passed'
+    | 'coding_passed';
+
+  const nowIso = new Date().toISOString();
+  const supabase = getSupabaseAdmin();
+
+  const { error } = await supabase
+    .from('mission_progress')
+    .update({
+      [passedColumn]: true,
+      current_stage: targetNextStage,
+      started_at: currentRow?.started_at ?? nowIso,
+      updated_at: nowIso,
+    })
+    .eq('student_id', studentId)
+    .eq('mission_id', missionId);
+
+  if (error) {
+    throw new Error(`Gagal menandai kelulusan tahap ${stage}: ${error.message}`);
+  }
+
+  return { nextStage };
+}
+
+/**
+ * Menyimpan draf teks/kode jawaban siswa untuk pemulihan otomatis (auto-save / sebelum evaluasi).
+ */
+export async function saveStageDraft(
+  studentId: string,
+  missionId: number,
+  stage: MissionStage,
+  contentText: string
+): Promise<{ savedAt: string }> {
+  if (!isMissionId(missionId) || !isMissionStage(stage)) {
+    throw new Error('Parameter misi atau tahap tidak valid.');
+  }
+
+  const savedAt = new Date().toISOString();
+  const supabase = getSupabaseAdmin();
+
+  const { error } = await supabase.from('stage_drafts').upsert(
+    {
+      student_id: studentId,
+      mission_id: missionId,
+      stage,
+      content_text: contentText,
+      updated_at: savedAt,
+    },
+    { onConflict: 'student_id,mission_id,stage' }
+  );
+
+  if (error) {
+    throw new Error(`Gagal menyimpan draf tahap ${stage}: ${error.message}`);
+  }
+
+  return { savedAt };
+}
