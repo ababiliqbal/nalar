@@ -49,14 +49,21 @@ function DashboardLoadingShell() {
   );
 }
 
-async function DashboardGuardLoader() {
+async function DashboardGuardLoader({
+  searchParams,
+}: {
+  searchParams: Promise<{ notice?: string | string[] }>;
+}) {
   const session = await getSessionFromCookies();
 
   if (!session) {
     redirect('/');
   }
 
-  const data = await getDashboardData(session.studentId);
+  const [data, resolvedSearchParams] = await Promise.all([
+    getDashboardData(session.studentId),
+    searchParams,
+  ]);
 
   if (!data) {
     redirect('/');
@@ -66,13 +73,20 @@ async function DashboardGuardLoader() {
     redirect('/pretest');
   }
 
-  return <DashboardShell data={data} />;
+  const rawNotice = resolvedSearchParams.notice;
+  const notice = Array.isArray(rawNotice) ? rawNotice[0] : rawNotice;
+
+  return <DashboardShell data={data} notice={notice} />;
 }
 
-export default function DashboardPage() {
+export default function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ notice?: string | string[] }>;
+}) {
   return (
     <Suspense fallback={<DashboardLoadingShell />}>
-      <DashboardGuardLoader />
+      <DashboardGuardLoader searchParams={searchParams} />
     </Suspense>
   );
 }

@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import {
+  AlertTriangle,
   BookOpen,
   Map as MapIcon,
   Network,
   Sparkles,
   Trophy,
   UserRound,
+  X,
 } from 'lucide-react';
 
 import { GuideModal } from '@/components/dashboard/GuideModal';
@@ -18,12 +20,16 @@ import type { DashboardData } from '@/lib/services/mission-gate.service';
 
 export interface DashboardShellProps {
   data: DashboardData;
+  notice?: string;
 }
 
-export function DashboardShell({ data }: DashboardShellProps) {
+export function DashboardShell({ data, notice }: DashboardShellProps) {
   const [guideOpen, setGuideOpen] = useState(false);
+  const [dismissedNotice, setDismissedNotice] = useState(false);
 
   const levelConfig = SCAFFOLDING_LEVELS[data.student.currentLevel];
+  const showMissionLockedNotice =
+    notice === 'mission-locked' && !dismissedNotice;
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink-primary lg:flex-row">
@@ -89,6 +95,32 @@ export function DashboardShell({ data }: DashboardShellProps) {
       <div className="mx-auto flex w-full max-w-[960px] flex-1 flex-col gap-6 px-4 py-6 sm:px-6 lg:flex-row lg:items-start lg:gap-8 lg:py-8">
         {/* Center Column: Module Banner + 5-Mission Learning Path (max-w-[540px]) */}
         <main className="mx-auto w-full max-w-[540px] flex-1">
+          {showMissionLockedNotice && (
+            <div
+              role="status"
+              className="mb-4 flex items-start justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-medium leading-relaxed text-[#D97706]"
+            >
+              <div className="flex items-start gap-2">
+                <AlertTriangle
+                  className="mt-0.5 h-4 w-4 shrink-0"
+                  strokeWidth={2}
+                />
+                <span>
+                  Misi tersebut masih terkunci. Selesaikan misi sebelumnya
+                  terlebih dahulu untuk membukanya.
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDismissedNotice(true)}
+                aria-label="Tutup pemberitahuan misi terkunci"
+                className="cursor-pointer rounded-md p-1 text-[#D97706] transition-colors hover:bg-amber-100"
+              >
+                <X className="h-3.5 w-3.5" strokeWidth={2} />
+              </button>
+            </div>
+          )}
+
           <section
             aria-label="Banner Modul 1"
             className="relative overflow-hidden rounded-2xl bg-primary px-5 py-5 text-white sm:px-6 sm:py-6"

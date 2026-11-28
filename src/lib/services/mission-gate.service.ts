@@ -292,7 +292,7 @@ export function evaluateStageAccess(
   if (!targetCard || targetCard.status === 'locked') {
     return {
       allowed: false,
-      redirectUrl: '/dashboard',
+      redirectUrl: '/dashboard?notice=mission-locked',
       progress: targetRow,
     };
   }
@@ -308,7 +308,7 @@ export function evaluateStageAccess(
   if (requestedIndex > highestIndex) {
     return {
       allowed: false,
-      redirectUrl: `/missions/${missionId}/${highestUnlockedStage}`,
+      redirectUrl: `/missions/${missionId}/${highestUnlockedStage}?notice=stage-locked`,
       progress: targetRow,
     };
   }
@@ -599,4 +599,77 @@ export async function saveStageDraft(
   }
 
   return { savedAt };
+}
+
+/**
+ * Mengambil status gate profil siswa (`currentLevel` & `pretestCompleted`) dalam satu query.
+ */
+export async function getStudentGateProfile(studentId: string): Promise<{
+  currentLevel: ScaffoldingLevelCode;
+  pretestCompleted: boolean;
+} | null> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from('students')
+    .select('current_level, initial_level, pretest_completed_at')
+    .eq('id', studentId)
+    .maybeSingle<{
+      current_level: string | null;
+      initial_level: string | null;
+      pretest_completed_at: string | null;
+    }>();
+
+  if (error) {
+    throw new Error(`Gagal memuat profil gate siswa: ${error.message}`);
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  const currentLevel: ScaffoldingLevelCode = isScaffoldingLevelCode(
+    data.current_level
+  )
+    ? data.current_level
+    : isScaffoldingLevelCode(data.initial_level)
+      ? data.initial_level
+      : 'EXPLORER';
+
+  return {
+    currentLevel,
+    pretestCompleted: data.pretest_completed_at !== null,
+  };
+}
+
+/**
+ * Memuat draf teks/kode tersimpan siswa dari `public.stage_drafts`.
+ * Mengembalikan string kosong `''` jika belum ada draf tersimpan.
+ */
+export async function getStageDraft(
+  studentId: string,
+  missionId: number,
+  stage: MissionStage
+): Promise<string> {
+  if (!isMissionId(missionId) || !isMissionStage(stage)) {
+    return '';
+  }
+
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from('stage_drafts')
+    .select('content_text')
+    .eq('student_id', studentId)
+    .eq('mission_id', missionId)
+    .eq('stage', stage)
+    .maybeSingle<{ content_text: string }>();
+
+  if (error) {
+    console.warn(
+      `[mission-gate] Gagal memuat draf tahap ${stage}:`,
+      error.message
+    );
+    return '';
+  }
+
+  return data?.content_text ?? '';
 }

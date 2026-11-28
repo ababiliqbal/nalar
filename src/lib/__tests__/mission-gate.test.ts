@@ -109,12 +109,20 @@ describe('mission-gate.service.ts — Perhitungan Status Misi Berurutan', () => 
 });
 
 describe('mission-gate.service.ts — Stage Gating & assertStageAccess', () => {
-  it('menolak lompat langsung ke tahap coding saat logic belum lulus dan mengarahkan ke tahap terbuka', () => {
+  it('menolak lompat langsung ke tahap coding atau evaluation saat logic belum lulus dengan notice=stage-locked', () => {
     const rows = makeInitialProgress();
 
     const jumpToCoding = evaluateStageAccess(rows, 1, 'coding');
     expect(jumpToCoding.allowed).toBe(false);
-    expect(jumpToCoding.redirectUrl).toBe('/missions/1/logic');
+    expect(jumpToCoding.redirectUrl).toBe(
+      '/missions/1/logic?notice=stage-locked'
+    );
+
+    const jumpToEvaluation = evaluateStageAccess(rows, 1, 'evaluation');
+    expect(jumpToEvaluation.allowed).toBe(false);
+    expect(jumpToEvaluation.redirectUrl).toBe(
+      '/missions/1/logic?notice=stage-locked'
+    );
 
     const accessLogic = evaluateStageAccess(rows, 1, 'logic');
     expect(accessLogic.allowed).toBe(true);
@@ -139,15 +147,17 @@ describe('mission-gate.service.ts — Stage Gating & assertStageAccess', () => {
     // Tidak boleh melompat ke coding sebelum evaluation lulus
     const jumpToCoding = evaluateStageAccess(rows, 1, 'coding');
     expect(jumpToCoding.allowed).toBe(false);
-    expect(jumpToCoding.redirectUrl).toBe('/missions/1/evaluation');
+    expect(jumpToCoding.redirectUrl).toBe(
+      '/missions/1/evaluation?notice=stage-locked'
+    );
   });
 
-  it('menolak akses ke misi yang masih terkunci dan mengarahkan ke /dashboard', () => {
+  it('menolak akses ke misi yang masih terkunci dan mengarahkan ke /dashboard?notice=mission-locked', () => {
     const rows = makeInitialProgress();
 
     const lockedMission2 = evaluateStageAccess(rows, 2, 'logic');
     expect(lockedMission2.allowed).toBe(false);
-    expect(lockedMission2.redirectUrl).toBe('/dashboard');
+    expect(lockedMission2.redirectUrl).toBe('/dashboard?notice=mission-locked');
 
     const invalidMission = evaluateStageAccess(rows, 99, 'logic');
     expect(invalidMission.allowed).toBe(false);
@@ -186,7 +196,9 @@ describe('mission-gate.service.ts — Stage Gating & assertStageAccess', () => {
       'evaluation'
     );
     expect(blockedEvaluation.allowed).toBe(false);
-    expect(blockedEvaluation.redirectUrl).toBe('/missions/1/analysis');
+    expect(blockedEvaluation.redirectUrl).toBe(
+      '/missions/1/analysis?notice=stage-locked'
+    );
 
     const blockedMission3 = await assertStageAccess(
       'student-uuid-1',
@@ -194,6 +206,8 @@ describe('mission-gate.service.ts — Stage Gating & assertStageAccess', () => {
       'logic'
     );
     expect(blockedMission3.allowed).toBe(false);
-    expect(blockedMission3.redirectUrl).toBe('/dashboard');
+    expect(blockedMission3.redirectUrl).toBe(
+      '/dashboard?notice=mission-locked'
+    );
   });
 });
